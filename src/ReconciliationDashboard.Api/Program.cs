@@ -11,10 +11,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Application Insights
 builder.Services.AddApplicationInsightsTelemetry();
 
-// CORS
-var allowedOrigins = builder.Configuration
-    .GetSection("AllowedOrigins")
-    .Get<string[]>() ?? ["http://localhost:4200"];
+// CORS — ALLOWED_ORIGINS env var (comma-separated) takes priority over appsettings array
+var allowedOrigins =
+    (Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") ?? "")
+        .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    is { Length: > 0 } envOrigins
+        ? envOrigins
+        : builder.Configuration.GetSection("AllowedOrigins").Get<string[]>()
+          ?? ["http://localhost:4200"];
 
 builder.Services.AddCors(options =>
     options.AddPolicy("AppPolicy", policy =>

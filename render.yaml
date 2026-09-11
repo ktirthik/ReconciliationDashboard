@@ -15,5 +15,5 @@ services:
         value: ReconciliationDashboardClient
       - key: Jwt__Key
         generateValue: true
-      - key: AllowedOrigins__0
+      - key: ALLOWED_ORIGINS
         value: https://ktirthik.github.io
