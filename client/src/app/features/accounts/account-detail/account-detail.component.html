@@ -137,6 +137,16 @@
                   Generated {{ c.createdAt | date: 'dd MMM yyyy HH:mm' }}
                   @if (c.appliedAt) { · Applied {{ c.appliedAt | date: 'dd MMM yyyy HH:mm' }} }
                 </div>
+                @if (c.status === 'Pending') {
+                  <div class="correction-actions">
+                    <button class="btn-apply" [disabled]="correctionActioning() === c.id" (click)="setStatus(c.id, 'Applied')">
+                      {{ correctionActioning() === c.id ? '…' : '✓ Apply' }}
+                    </button>
+                    <button class="btn-reject" [disabled]="correctionActioning() === c.id" (click)="setStatus(c.id, 'Rejected')">
+                      {{ correctionActioning() === c.id ? '…' : '✗ Reject' }}
+                    </button>
+                  </div>
+                }
               </div>
             }
           </div>

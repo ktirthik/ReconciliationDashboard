@@ -10,51 +10,72 @@
     <div class="alert alert-error">{{ error() }}</div>
   } @else {
     <div class="stat-row">
+      <div class="stat-card stat-total">
+        <div class="stat-value">{{ allAccounts().length }}</div>
+        <div class="stat-label">Total</div>
+      </div>
       <div class="stat-card stat-flagged">
-        <div class="stat-value">{{ flagged.length }}</div>
+        <div class="stat-value">{{ flagged().length }}</div>
         <div class="stat-label">Flagged</div>
       </div>
       <div class="stat-card stat-atrisk">
-        <div class="stat-value">{{ atRisk.length }}</div>
+        <div class="stat-value">{{ atRisk().length }}</div>
         <div class="stat-label">At Risk</div>
       </div>
       <div class="stat-card stat-active">
-        <div class="stat-value">{{ active.length }}</div>
+        <div class="stat-value">{{ active().length }}</div>
         <div class="stat-label">Active</div>
       </div>
       <div class="stat-card stat-closed">
-        <div class="stat-value">{{ closed.length }}</div>
+        <div class="stat-value">{{ closed().length }}</div>
         <div class="stat-label">Closed</div>
       </div>
     </div>
 
-    @if (flagged.length > 0 || atRisk.length > 0) {
-      <section class="priority-section">
-        <h2>Priority Casework</h2>
-        <p class="section-hint">Accounts requiring immediate attention</p>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Account</th>
-              <th>Customer</th>
-              <th>Status</th>
-              <th>Flag Reason</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (account of [...flagged, ...atRisk]; track account.id) {
+    <div class="dashboard-grid">
+      @if (flagged().length > 0 || atRisk().length > 0) {
+        <section class="priority-section">
+          <h2>Priority Casework</h2>
+          <p class="section-hint">Accounts requiring immediate attention</p>
+          <table class="data-table">
+            <thead>
               <tr>
-                <td class="mono">{{ account.accountNumber }}</td>
-                <td>{{ account.customerName }}</td>
-                <td><app-status-badge [status]="account.status" /></td>
-                <td class="flag-reason">{{ account.flagReason ?? '—' }}</td>
-                <td><a [routerLink]="['/accounts', account.id]" class="link">View →</a></td>
+                <th>Account</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Flag Reason</th>
+                <th></th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (account of [...flagged(), ...atRisk()]; track account.id) {
+                <tr>
+                  <td class="mono">{{ account.accountNumber }}</td>
+                  <td>{{ account.customerName }}</td>
+                  <td><app-status-badge [status]="account.status" /></td>
+                  <td class="flag-reason">{{ account.flagReason ?? '—' }}</td>
+                  <td><a [routerLink]="['/accounts', account.id]" class="link">View →</a></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+      }
+
+      <section class="recent-section">
+        <h2>Recently Updated</h2>
+        <p class="section-hint">Last 5 accounts with any change</p>
+        <div class="recent-list">
+          @for (account of recentlyUpdated(); track account.id) {
+            <a [routerLink]="['/accounts', account.id]" class="recent-row">
+              <span class="mono recent-num">{{ account.accountNumber }}</span>
+              <span class="recent-name">{{ account.customerName }}</span>
+              <app-status-badge [status]="account.status" />
+              <span class="recent-date muted">{{ account.updatedAt | date: 'dd MMM' }}</span>
+            </a>
+          }
+        </div>
       </section>
-    }
+    </div>
   }
 </div>

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ReconciliationDashboard.Api.Models;
 using ReconciliationDashboard.Api.Models.Dtos;
 using ReconciliationDashboard.Api.Services;
 
@@ -16,6 +17,22 @@ public class CorrectionsController(ICorrectionService correctionService) : Contr
     {
         var corrections = await correctionService.GetByAccountAsync(accountId, ct);
         return Ok(corrections);
+    }
+
+    [HttpPatch("{correctionId:guid}/status")]
+    [ProducesResponseType(typeof(CorrectionDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> SetStatus(
+        Guid accountId, Guid correctionId,
+        [FromBody] SetCorrectionStatusRequest request,
+        CancellationToken ct)
+    {
+        if (!Enum.TryParse<CorrectionStatus>(request.Status, ignoreCase: true, out var parsed))
+            return BadRequest(Problem($"'{request.Status}' is not a valid status."));
+
+        var result = await correctionService.SetStatusAsync(accountId, correctionId, parsed, ct);
+        return result is null ? NotFound() : Ok(result);
     }
 
     [HttpPost("run")]

@@ -1,27 +1,65 @@
 .stat-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 1rem;
   margin-bottom: 2rem;
 
-  @media (max-width: 640px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 800px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 480px) { grid-template-columns: repeat(2, 1fr); }
 }
 
 .stat-card {
   border-radius: 8px;
-  padding: 1.5rem;
+  padding: 1.25rem 1rem;
   text-align: center;
   border: 1px solid var(--border);
 
-  .stat-value { font-size: 2.5rem; font-weight: 700; line-height: 1; }
-  .stat-label { font-size: 0.85rem; margin-top: 0.25rem; opacity: 0.75; }
+  .stat-value { font-size: 2.25rem; font-weight: 700; line-height: 1; }
+  .stat-label { font-size: 0.8rem; margin-top: 0.3rem; opacity: 0.75; text-transform: uppercase; letter-spacing: 0.04em; }
 
+  &.stat-total   { background: var(--surface-alt); .stat-value { color: var(--text); } }
   &.stat-flagged { background: #fff3cd; border-color: #ffc107; .stat-value { color: #856404; } }
   &.stat-atrisk  { background: #f8d7da; border-color: #dc3545; .stat-value { color: #842029; } }
   &.stat-active  { background: #d1e7dd; border-color: #198754; .stat-value { color: #0f5132; } }
   &.stat-closed  { background: #e2e3e5; border-color: #adb5bd; .stat-value { color: #41464b; } }
 }
 
-.priority-section h2 { margin-bottom: 0.25rem; }
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+  align-items: start;
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+}
+
+.priority-section h2, .recent-section h2 { margin-bottom: 0.25rem; }
 .section-hint { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem; }
 .flag-reason { max-width: 320px; font-size: 0.85rem; color: var(--text-muted); }
+
+.recent-section { }
+
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recent-row {
+  display: grid;
+  grid-template-columns: 90px 1fr auto auto;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--surface);
+  font-size: 0.875rem;
+  transition: background 0.15s;
+  &:hover { background: var(--surface-alt); }
+}
+
+.recent-num  { font-family: monospace; font-size: 0.85rem; }
+.recent-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent-date { font-size: 0.78rem; white-space: nowrap; }

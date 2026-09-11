@@ -1,5 +1,7 @@
 namespace ReconciliationDashboard.Api.Models.Dtos;
 
+public record SetCorrectionStatusRequest(string Status);
+
 public record CorrectionDto(
     Guid Id,
     Guid AccountId,

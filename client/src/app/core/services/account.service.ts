@@ -42,4 +42,8 @@ export class AccountService {
   runCorrectionsEngine(id: string): Observable<Correction[]> {
     return this.http.post<Correction[]>(`${this.base}/${id}/corrections/run`, {});
   }
+
+  setCorrectionsStatus(accountId: string, correctionId: string, status: 'Applied' | 'Rejected'): Observable<Correction> {
+    return this.http.patch<Correction>(`${this.base}/${accountId}/corrections/${correctionId}/status`, { status });
+  }
 }

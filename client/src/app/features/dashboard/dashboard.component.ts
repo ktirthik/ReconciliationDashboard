@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Account } from '../../core/models/account.model';
 import { AccountService } from '../../core/services/account.service';
@@ -7,7 +8,7 @@ import { StatusBadgeComponent } from '../../shared/status-badge/status-badge.com
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, StatusBadgeComponent],
+  imports: [RouterLink, DatePipe, StatusBadgeComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -18,10 +19,16 @@ export class DashboardComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
 
-  get flagged() { return this.allAccounts().filter(a => a.status === 'Flagged'); }
-  get atRisk()  { return this.allAccounts().filter(a => a.status === 'AtRisk'); }
-  get active()  { return this.allAccounts().filter(a => a.status === 'Active'); }
-  get closed()  { return this.allAccounts().filter(a => a.status === 'Closed'); }
+  flagged  = computed(() => this.allAccounts().filter(a => a.status === 'Flagged'));
+  atRisk   = computed(() => this.allAccounts().filter(a => a.status === 'AtRisk'));
+  active   = computed(() => this.allAccounts().filter(a => a.status === 'Active'));
+  closed   = computed(() => this.allAccounts().filter(a => a.status === 'Closed'));
+
+  recentlyUpdated = computed(() =>
+    [...this.allAccounts()]
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .slice(0, 5)
+  );
 
   ngOnInit() {
     this.accountService.getAll().subscribe({

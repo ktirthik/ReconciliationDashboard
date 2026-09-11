@@ -34,6 +34,7 @@ export class AccountDetailComponent implements OnInit {
   correctionsRunning = signal(false);
   correctionsError = signal<string | null>(null);
   correctionsLoaded = signal(false);
+  correctionActioning = signal<string | null>(null);
 
   editMode = signal(false);
   editForm: UpdateAccountRequest = { customerName: '', status: 'Active', flagReason: null };
@@ -107,6 +108,21 @@ export class AccountDetailComponent implements OnInit {
         this.correctionsLoaded.set(true);
       },
       error: () => { this.correctionsError.set('Failed to run correction engine.'); this.correctionsRunning.set(false); }
+    });
+  }
+
+  setStatus(correctionId: string, status: 'Applied' | 'Rejected') {
+    this.correctionActioning.set(correctionId);
+    this.correctionsError.set(null);
+    this.accountService.setCorrectionsStatus(this.id, correctionId, status).subscribe({
+      next: updated => {
+        this.corrections.update(list => list.map(c => c.id === updated.id ? updated : c));
+        this.correctionActioning.set(null);
+      },
+      error: () => {
+        this.correctionsError.set('Failed to update correction status.');
+        this.correctionActioning.set(null);
+      }
     });
   }
 

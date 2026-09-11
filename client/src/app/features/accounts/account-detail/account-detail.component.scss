@@ -85,3 +85,13 @@
 .value-arrow { font-size: 1.2rem; color: var(--text-muted); padding-top: 1.2rem; }
 
 .correction-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+.correction-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+
+.btn-apply, .btn-reject {
+  padding: 0.3rem 0.75rem; border-radius: 5px; border: none;
+  cursor: pointer; font-size: 0.8rem; font-weight: 600;
+  &:disabled { opacity: 0.5; cursor: default; }
+}
+.btn-apply  { background: #dcfce7; color: #166534; &:hover:not(:disabled) { background: #bbf7d0; } }
+.btn-reject { background: #fee2e2; color: #991b1b; &:hover:not(:disabled) { background: #fecaca; } }

@@ -42,6 +42,21 @@ public class CorrectionService(AppDbContext db) : ICorrectionService
         return newRecords.Select(ToDto).ToList();
     }
 
+    public async Task<CorrectionDto?> SetStatusAsync(Guid accountId, Guid correctionId, CorrectionStatus status, CancellationToken ct = default)
+    {
+        var record = await db.Corrections
+            .FirstOrDefaultAsync(c => c.Id == correctionId && c.AccountId == accountId, ct);
+
+        if (record is null) return null;
+
+        record.Status = status;
+        if (status == CorrectionStatus.Applied)
+            record.AppliedAt = DateTimeOffset.UtcNow;
+
+        await db.SaveChangesAsync(ct);
+        return ToDto(record);
+    }
+
     private static List<CorrectionRecord> ApplyRules(Account account)
     {
         var now = DateTimeOffset.UtcNow;

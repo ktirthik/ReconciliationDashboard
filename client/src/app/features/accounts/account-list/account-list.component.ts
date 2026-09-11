@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -20,8 +20,18 @@ export class AccountListComponent implements OnInit {
   loading = signal(true);
   error = signal<string | null>(null);
   statusFilter = signal<AccountStatus | ''>('');
+  searchQuery = signal('');
 
   readonly statuses: Array<AccountStatus | ''> = ['', 'Active', 'Flagged', 'AtRisk', 'Closed'];
+
+  filtered = computed(() => {
+    const q = this.searchQuery().trim().toLowerCase();
+    if (!q) return this.accounts();
+    return this.accounts().filter(a =>
+      a.accountNumber.toLowerCase().includes(q) ||
+      a.customerName.toLowerCase().includes(q)
+    );
+  });
 
   ngOnInit() { this.load(); }
 
@@ -35,4 +45,25 @@ export class AccountListComponent implements OnInit {
   }
 
   onFilterChange() { this.load(); }
+
+  exportCsv() {
+    const rows = this.filtered();
+    const header = ['Account Number', 'Customer Name', 'Status', 'Flag Reason', 'Created', 'Last Updated'];
+    const lines = rows.map(a => [
+      a.accountNumber,
+      `"${a.customerName.replace(/"/g, '""')}"`,
+      a.status,
+      a.flagReason ? `"${a.flagReason.replace(/"/g, '""')}"` : '',
+      new Date(a.createdAt).toISOString().slice(0, 10),
+      new Date(a.updatedAt).toISOString().slice(0, 10)
+    ].join(','));
+    const csv = [header.join(','), ...lines].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `accounts-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 }
