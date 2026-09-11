@@ -13,7 +13,10 @@ RUN dotnet publish "src/ReconciliationDashboard.Api/ReconciliationDashboard.Api.
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
+RUN mkdir -p /data
+
 ENV ASPNETCORE_URLS=http://+:8080
+ENV DATABASE_PROVIDER=sqlite
 EXPOSE 8080
 
 COPY --from=build /app/publish .

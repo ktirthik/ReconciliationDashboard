@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 interface LoginResponse { token: string; }
 
@@ -12,7 +13,7 @@ export class AuthService {
   isLoggedIn = signal(this.hasToken());
 
   login(username: string, password: string) {
-    return this.http.post<LoginResponse>('/api/auth/login', { username, password }).pipe(
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/api/auth/login`, { username, password }).pipe(
       tap(res => {
         try { localStorage.setItem(this.TOKEN_KEY, res.token); } catch {}
         this.isLoggedIn.set(true);

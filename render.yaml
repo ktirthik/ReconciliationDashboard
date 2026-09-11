@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: reconciliation-dashboard-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DATABASE_PROVIDER
+        value: sqlite
+      - key: Jwt__Issuer
+        value: ReconciliationDashboard
+      - key: Jwt__Audience
+        value: ReconciliationDashboardClient
+      - key: Jwt__Key
+        generateValue: true
+      - key: AllowedOrigins__0
+        value: https://ktirthik.github.io

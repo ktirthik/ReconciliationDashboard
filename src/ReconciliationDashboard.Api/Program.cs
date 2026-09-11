@@ -44,8 +44,14 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+var dbProvider = builder.Configuration["DATABASE_PROVIDER"] ?? Environment.GetEnvironmentVariable("DATABASE_PROVIDER") ?? "sqlserver";
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    if (dbProvider.Equals("sqlite", StringComparison.OrdinalIgnoreCase))
+        options.UseSqlite("Data Source=/data/reconciliation.db");
+    else
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAiInsightService, AiInsightService>();
@@ -55,11 +61,14 @@ builder.Services.AddSingleton<IEventDispatcher, LoggingEventDispatcher>();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
-{
     app.MapOpenApi();
 
-    using var scope = app.Services.CreateScope();
+// Always migrate and seed — on SQLite this creates the DB file on first run.
+using (var scope = app.Services.CreateScope())
+{
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    if (dbProvider.Equals("sqlite", StringComparison.OrdinalIgnoreCase))
+        db.Database.EnsureCreated();
     await SeedData.SeedAsync(db);
 }
 

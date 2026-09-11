@@ -1,12 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { Account, AccountStatus, AiInsight, CreateAccountRequest, UpdateAccountRequest } from '../models/account.model';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
   private readonly http = inject(HttpClient);
-  private readonly base = '/api/accounts';
+  private readonly base = `${environment.apiUrl}/api/accounts`;
 
   getAll(status?: AccountStatus): Observable<Account[]> {
     let params = new HttpParams();
