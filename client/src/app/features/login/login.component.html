@@ -1,0 +1,30 @@
+<div class="login-page">
+  <div class="login-card">
+    <h1 class="login-title">Reconciliation Dashboard</h1>
+    <p class="muted">Sign in to continue</p>
+
+    @if (error()) {
+      <div class="alert alert-error">{{ error() }}</div>
+    }
+
+    <form (ngSubmit)="submit()" #f="ngForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" class="input" type="text"
+               [(ngModel)]="username" name="username"
+               autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" class="input" type="password"
+               [(ngModel)]="password" name="password"
+               autocomplete="current-password" required />
+      </div>
+      <button class="btn btn-primary login-btn" type="submit" [disabled]="loading()">
+        @if (loading()) { Signing in… } @else { Sign in }
+      </button>
+    </form>
+
+    <p class="muted hint">Demo: <code>admin / Admin1234!</code> or <code>analyst / Analyst1234!</code></p>
+  </div>
+</div>

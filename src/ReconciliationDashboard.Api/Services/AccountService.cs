@@ -1,12 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using ReconciliationDashboard.Api.Data;
+using ReconciliationDashboard.Api.Events;
 using ReconciliationDashboard.Api.Models;
 using ReconciliationDashboard.Api.Models.Dtos;
 
 namespace ReconciliationDashboard.Api.Services;
 
-public class AccountService(AppDbContext db) : IAccountService
+public class AccountService(AppDbContext db, IEventDispatcher events) : IAccountService
 {
+    private static readonly HashSet<AccountStatus> FlaggedStatuses =
+        [AccountStatus.Flagged, AccountStatus.AtRisk];
+
     public async Task<IReadOnlyList<AccountDto>> GetAllAsync(AccountStatus? status, CancellationToken ct)
     {
         var query = db.Accounts.AsQueryable();
@@ -51,12 +55,26 @@ public class AccountService(AppDbContext db) : IAccountService
         if (!Enum.TryParse<AccountStatus>(request.Status, ignoreCase: true, out var parsedStatus))
             throw new ArgumentException($"'{request.Status}' is not a valid account status.");
 
+        var wasAlreadyFlagged = FlaggedStatuses.Contains(account.Status);
+
         account.CustomerName = request.CustomerName;
         account.Status = parsedStatus;
         account.FlagReason = request.FlagReason;
         account.UpdatedAt = DateTimeOffset.UtcNow;
 
         await db.SaveChangesAsync(ct);
+
+        if (FlaggedStatuses.Contains(parsedStatus) && !wasAlreadyFlagged)
+        {
+            await events.DispatchAsync(new AccountFlaggedEvent(
+                account.Id,
+                account.AccountNumber,
+                account.CustomerName,
+                parsedStatus.ToString(),
+                account.FlagReason,
+                DateTime.UtcNow), ct);
+        }
+
         return ToDto(account);
     }
 

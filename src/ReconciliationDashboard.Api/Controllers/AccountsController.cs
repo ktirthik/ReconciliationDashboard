@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReconciliationDashboard.Api.Models;
 using ReconciliationDashboard.Api.Models.Dtos;
@@ -5,6 +6,7 @@ using ReconciliationDashboard.Api.Services;
 
 namespace ReconciliationDashboard.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class AccountsController(IAccountService accountService) : ControllerBase

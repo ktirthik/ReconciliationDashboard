@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReconciliationDashboard.Api.Models.Dtos;
 using ReconciliationDashboard.Api.Services;
 
 namespace ReconciliationDashboard.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/accounts/{accountId:guid}/ai-insight")]
 public class AiInsightController(IAiInsightService aiService) : ControllerBase
