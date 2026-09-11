@@ -60,6 +60,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAiInsightService, AiInsightService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICorrectionService, CorrectionService>();
 builder.Services.AddSingleton<IEventDispatcher, LoggingEventDispatcher>();
 
 var app = builder.Build();

@@ -33,3 +33,18 @@ export interface UpdateAccountRequest {
   status: AccountStatus;
   flagReason: string | null;
 }
+
+export type CorrectionStatus = 'Pending' | 'Applied' | 'Rejected';
+export type CorrectionType = 'InterestSuppression' | 'MeterRemap' | 'ClassificationError' | 'DebtRestructure' | 'ManualReview';
+
+export interface Correction {
+  id: string;
+  accountId: string;
+  correctionType: CorrectionType;
+  description: string;
+  originalValue: string | null;
+  correctedValue: string | null;
+  status: CorrectionStatus;
+  createdAt: string;
+  appliedAt: string | null;
+}

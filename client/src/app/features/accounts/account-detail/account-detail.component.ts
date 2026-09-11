@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Account, AccountStatus, AiInsight, UpdateAccountRequest } from '../../../core/models/account.model';
+import { Account, AccountStatus, AiInsight, Correction, UpdateAccountRequest } from '../../../core/models/account.model';
 import { AccountService } from '../../../core/services/account.service';
 import { StatusBadgeComponent } from '../../../shared/status-badge/status-badge.component';
 
@@ -28,6 +28,12 @@ export class AccountDetailComponent implements OnInit {
   insight = signal<AiInsight | null>(null);
   insightLoading = signal(false);
   insightError = signal<string | null>(null);
+
+  corrections = signal<Correction[]>([]);
+  correctionsLoading = signal(false);
+  correctionsRunning = signal(false);
+  correctionsError = signal<string | null>(null);
+  correctionsLoaded = signal(false);
 
   editMode = signal(false);
   editForm: UpdateAccountRequest = { customerName: '', status: 'Active', flagReason: null };
@@ -80,5 +86,38 @@ export class AccountDetailComponent implements OnInit {
       next: insight => { this.insight.set(insight); this.insightLoading.set(false); },
       error: () => { this.insightError.set('Failed to load AI insight.'); this.insightLoading.set(false); }
     });
+  }
+
+  loadCorrections() {
+    this.correctionsLoading.set(true);
+    this.correctionsError.set(null);
+    this.accountService.getCorrections(this.id).subscribe({
+      next: c => { this.corrections.set(c); this.correctionsLoading.set(false); this.correctionsLoaded.set(true); },
+      error: () => { this.correctionsError.set('Failed to load corrections.'); this.correctionsLoading.set(false); }
+    });
+  }
+
+  runEngine() {
+    this.correctionsRunning.set(true);
+    this.correctionsError.set(null);
+    this.accountService.runCorrectionsEngine(this.id).subscribe({
+      next: newOnes => {
+        this.corrections.update(existing => [...newOnes, ...existing]);
+        this.correctionsRunning.set(false);
+        this.correctionsLoaded.set(true);
+      },
+      error: () => { this.correctionsError.set('Failed to run correction engine.'); this.correctionsRunning.set(false); }
+    });
+  }
+
+  correctionTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      InterestSuppression: 'Interest Suppression',
+      MeterRemap: 'Meter Remap',
+      ClassificationError: 'Classification Error',
+      DebtRestructure: 'Debt Restructure',
+      ManualReview: 'Manual Review'
+    };
+    return labels[type] ?? type;
   }
 }

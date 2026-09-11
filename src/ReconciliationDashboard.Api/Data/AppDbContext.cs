@@ -7,6 +7,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 {
     public DbSet<Account> Accounts => Set<Account>();
     public DbSet<CaseNote> CaseNotes => Set<CaseNote>();
+    public DbSet<CorrectionRecord> Corrections => Set<CorrectionRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,6 +25,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.HasKey(c => c.Id);
             e.Property(c => c.Title).HasMaxLength(200).IsRequired();
             e.Property(c => c.Tags).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<CorrectionRecord>(e =>
+        {
+            e.HasKey(c => c.Id);
+            e.Property(c => c.CorrectionType).HasConversion<string>().HasMaxLength(30);
+            e.Property(c => c.Status).HasConversion<string>().HasMaxLength(20);
+            e.Property(c => c.Description).HasMaxLength(500).IsRequired();
+            e.Property(c => c.OriginalValue).HasMaxLength(500);
+            e.Property(c => c.CorrectedValue).HasMaxLength(500);
+            e.HasOne(c => c.Account).WithMany().HasForeignKey(c => c.AccountId).OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

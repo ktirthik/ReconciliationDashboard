@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Account, AccountStatus, AiInsight, CreateAccountRequest, UpdateAccountRequest } from '../models/account.model';
+import { Account, AccountStatus, AiInsight, Correction, CreateAccountRequest, UpdateAccountRequest } from '../models/account.model';
 
 @Injectable({ providedIn: 'root' })
 export class AccountService {
@@ -33,5 +33,13 @@ export class AccountService {
 
   getAiInsight(id: string): Observable<AiInsight> {
     return this.http.get<AiInsight>(`${this.base}/${id}/ai-insight`);
+  }
+
+  getCorrections(id: string): Observable<Correction[]> {
+    return this.http.get<Correction[]>(`${this.base}/${id}/corrections`);
+  }
+
+  runCorrectionsEngine(id: string): Observable<Correction[]> {
+    return this.http.post<Correction[]>(`${this.base}/${id}/corrections/run`, {});
   }
 }

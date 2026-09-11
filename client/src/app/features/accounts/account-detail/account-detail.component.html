@@ -85,6 +85,64 @@
         </div>
       </div>
 
+      <!-- Billing Corrections panel -->
+      <div class="detail-card corrections-card">
+        <div class="corrections-header">
+          <h2>Billing Corrections</h2>
+          <div class="corrections-actions">
+            @if (!correctionsLoaded()) {
+              <button class="btn btn-outline" [disabled]="correctionsLoading()" (click)="loadCorrections()">
+                {{ correctionsLoading() ? 'Loading…' : 'Load Corrections' }}
+              </button>
+            }
+            <button class="btn btn-engine" [disabled]="correctionsRunning()" (click)="runEngine()">
+              {{ correctionsRunning() ? 'Running…' : 'Run Correction Engine' }}
+            </button>
+          </div>
+        </div>
+
+        @if (correctionsError()) {
+          <div class="alert alert-error">{{ correctionsError() }}</div>
+        }
+
+        @if (!correctionsLoaded() && !correctionsLoading()) {
+          <p class="muted">Click "Load Corrections" to view existing corrections, or "Run Correction Engine" to analyse this account and generate new ones.</p>
+        } @else if (correctionsLoading()) {
+          <div class="loading">Loading corrections…</div>
+        } @else if (corrections().length === 0) {
+          <p class="muted">No corrections recorded for this account yet.</p>
+        } @else {
+          <div class="correction-list">
+            @for (c of corrections(); track c.id) {
+              <div class="correction-row">
+                <div class="correction-top">
+                  <span class="correction-type-chip">{{ correctionTypeLabel(c.correctionType) }}</span>
+                  <span class="correction-status" [attr.data-status]="c.status">{{ c.status }}</span>
+                </div>
+                <p class="correction-desc">{{ c.description }}</p>
+                @if (c.originalValue || c.correctedValue) {
+                  <div class="correction-values">
+                    <div class="value-block">
+                      <span class="value-label">Before</span>
+                      <span class="value-text">{{ c.originalValue ?? '—' }}</span>
+                    </div>
+                    <span class="value-arrow">→</span>
+                    <div class="value-block">
+                      <span class="value-label">After</span>
+                      <span class="value-text">{{ c.correctedValue ?? 'Pending manual review' }}</span>
+                    </div>
+                  </div>
+                }
+                <div class="correction-meta">
+                  Generated {{ c.createdAt | date: 'dd MMM yyyy HH:mm' }}
+                  @if (c.appliedAt) { · Applied {{ c.appliedAt | date: 'dd MMM yyyy HH:mm' }} }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
     <!-- Edit mode -->
     } @else {
       <div class="detail-card">
