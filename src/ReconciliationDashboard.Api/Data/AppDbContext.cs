@@ -6,6 +6,7 @@ namespace ReconciliationDashboard.Api.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
     public DbSet<Account> Accounts => Set<Account>();
+    public DbSet<CaseNote> CaseNotes => Set<CaseNote>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -15,9 +16,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             e.Property(a => a.AccountNumber).HasMaxLength(50).IsRequired();
             e.Property(a => a.CustomerName).HasMaxLength(200).IsRequired();
             e.Property(a => a.FlagReason).HasMaxLength(500);
-            // Store the enum as a string so migrations are readable and adding a new
-            // status value doesn't break existing rows.
             e.Property(a => a.Status).HasConversion<string>().HasMaxLength(20);
+        });
+
+        modelBuilder.Entity<CaseNote>(e =>
+        {
+            e.HasKey(c => c.Id);
+            e.Property(c => c.Title).HasMaxLength(200).IsRequired();
+            e.Property(c => c.Tags).HasMaxLength(500);
         });
     }
 }

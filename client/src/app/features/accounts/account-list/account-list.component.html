@@ -1,0 +1,48 @@
+<div class="page">
+  <header class="page-header">
+    <h1>Accounts</h1>
+    <a routerLink="/accounts/new" class="btn btn-primary">+ New Account</a>
+  </header>
+
+  <div class="toolbar">
+    <label for="statusFilter">Filter by status</label>
+    <select id="statusFilter" [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()" class="select">
+      <option value="">All</option>
+      @for (s of statuses.slice(1); track s) {
+        <option [value]="s">{{ s === 'AtRisk' ? 'At Risk' : s }}</option>
+      }
+    </select>
+    <span class="count">{{ accounts().length }} account{{ accounts().length !== 1 ? 's' : '' }}</span>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Loading…</div>
+  } @else if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  } @else if (accounts().length === 0) {
+    <div class="empty">No accounts found.</div>
+  } @else {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Account #</th>
+          <th>Customer</th>
+          <th>Status</th>
+          <th>Last Updated</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (account of accounts(); track account.id) {
+          <tr>
+            <td class="mono">{{ account.accountNumber }}</td>
+            <td>{{ account.customerName }}</td>
+            <td><app-status-badge [status]="account.status" /></td>
+            <td class="muted">{{ account.updatedAt | date: 'dd MMM yyyy' }}</td>
+            <td><a [routerLink]="['/accounts', account.id]" class="link">View →</a></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

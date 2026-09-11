@@ -1,0 +1,120 @@
+<div class="page">
+  <a routerLink="/accounts" class="back-link">← Back to Accounts</a>
+
+  @if (loading()) {
+    <div class="loading">Loading…</div>
+  } @else if (error() && !account()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  } @else if (account(); as a) {
+    <header class="page-header">
+      <div>
+        <h1 class="mono">{{ a.accountNumber }}</h1>
+        <p class="customer-name">{{ a.customerName }}</p>
+      </div>
+      <div class="header-actions">
+        @if (!editMode()) {
+          <button class="btn btn-outline" (click)="startEdit()">Edit</button>
+          <button class="btn btn-danger" [disabled]="deleting()" (click)="delete()">
+            {{ deleting() ? 'Deleting…' : 'Delete' }}
+          </button>
+        }
+      </div>
+    </header>
+
+    @if (successMsg()) { <div class="alert alert-success">{{ successMsg() }}</div> }
+    @if (error())       { <div class="alert alert-error">{{ error() }}</div> }
+
+    <!-- View mode -->
+    @if (!editMode()) {
+      <div class="detail-grid">
+        <div class="detail-card">
+          <h2>Account Details</h2>
+          <dl class="field-list">
+            <dt>Status</dt>
+            <dd><app-status-badge [status]="a.status" /></dd>
+            <dt>Flag Reason</dt>
+            <dd>{{ a.flagReason ?? '—' }}</dd>
+            <dt>Created</dt>
+            <dd>{{ a.createdAt | date: 'dd MMM yyyy' }}</dd>
+            <dt>Last Updated</dt>
+            <dd>{{ a.updatedAt | date: 'dd MMM yyyy HH:mm' }}</dd>
+          </dl>
+        </div>
+
+        <!-- AI Case Insight panel -->
+        <div class="detail-card ai-card">
+          <div class="ai-header">
+            <h2>AI Case Insight</h2>
+            @if (!insight() && !insightLoading()) {
+              <button class="btn btn-ai" (click)="loadInsight()">Generate Insight</button>
+            }
+          </div>
+
+          @if (insightLoading()) {
+            <div class="loading">Analysing account with AI…</div>
+          } @else if (insightError()) {
+            <div class="alert alert-error">{{ insightError() }}</div>
+          } @else if (insight(); as ins) {
+            <div class="ai-summary">
+              <p>{{ ins.summary }}</p>
+            </div>
+
+            @if (ins.similarCases.length > 0) {
+              <h3>Similar Past Cases</h3>
+              <div class="similar-cases">
+                @for (c of ins.similarCases; track c.id) {
+                  <div class="case-card">
+                    <div class="case-title">{{ c.title }}</div>
+                    <div class="case-content">{{ c.content }}</div>
+                    <div class="case-meta">
+                      <span class="tags">{{ c.tags }}</span>
+                      <span class="similarity">{{ (c.similarity * 100).toFixed(0) }}% match</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <p class="muted">No similar past cases found.</p>
+            }
+          } @else {
+            <p class="muted ai-hint">
+              Click "Generate Insight" to get an AI-generated summary of this account's flag reason
+              and surface similar historical cases from the knowledge base.
+            </p>
+          }
+        </div>
+      </div>
+
+    <!-- Edit mode -->
+    } @else {
+      <div class="detail-card">
+        <h2>Edit Account</h2>
+        <form (ngSubmit)="save()" class="edit-form">
+          <div class="field">
+            <label for="customerName">Customer Name</label>
+            <input id="customerName" [(ngModel)]="editForm.customerName" name="customerName" required class="input" />
+          </div>
+          <div class="field">
+            <label for="status">Status</label>
+            <select id="status" [(ngModel)]="editForm.status" name="status" class="select">
+              @for (s of statuses; track s) {
+                <option [value]="s">{{ s === 'AtRisk' ? 'At Risk' : s }}</option>
+              }
+            </select>
+          </div>
+          <div class="field">
+            <label for="flagReason">Flag Reason</label>
+            <textarea id="flagReason" [(ngModel)]="editForm.flagReason" name="flagReason"
+                      class="input textarea" rows="3" placeholder="Optional"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="saving()">
+              {{ saving() ? 'Saving…' : 'Save Changes' }}
+            </button>
+            <button type="button" class="btn btn-outline" (click)="cancelEdit()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    }
+  }
+</div>

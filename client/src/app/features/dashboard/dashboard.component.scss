@@ -1,0 +1,27 @@
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: 640px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.stat-card {
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid var(--border);
+
+  .stat-value { font-size: 2.5rem; font-weight: 700; line-height: 1; }
+  .stat-label { font-size: 0.85rem; margin-top: 0.25rem; opacity: 0.75; }
+
+  &.stat-flagged { background: #fff3cd; border-color: #ffc107; .stat-value { color: #856404; } }
+  &.stat-atrisk  { background: #f8d7da; border-color: #dc3545; .stat-value { color: #842029; } }
+  &.stat-active  { background: #d1e7dd; border-color: #198754; .stat-value { color: #0f5132; } }
+  &.stat-closed  { background: #e2e3e5; border-color: #adb5bd; .stat-value { color: #41464b; } }
+}
+
+.priority-section h2 { margin-bottom: 0.25rem; }
+.section-hint { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem; }
+.flag-reason { max-width: 320px; font-size: 0.85rem; color: var(--text-muted); }
