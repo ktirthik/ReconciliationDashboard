@@ -1,0 +1,58 @@
+## .NET / ASP.NET Core
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+.vs/
+_ReSharper*/
+*.DotSettings.user
+
+## EF Core migrations SQLite snapshots (keep .cs migration files)
+*.db
+*.db-shm
+*.db-wal
+
+## Build outputs
+[Pp]ublish/
+[Rr]elease/
+[Dd]ebug/
+x64/
+x86/
+
+## Rider
+.idea/
+
+## VS Code
+.vscode/
+!.vscode/extensions.json
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Logs
+*.log
+logs/
+
+## Secrets — never commit these
+appsettings.Production.json
+appsettings.Staging.json
+secrets.json
+*.pfx
+*.p12
+
+## Node (Angular frontend, added in Week 3)
+node_modules/
+dist/
+.angular/cache/
+
+## OS
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,7 @@
+<Project>
+  <!-- Opts dotnet test into the Microsoft.Testing.Platform (MTP) runner.
+       Required for xUnit v3 on .NET 10 SDK. -->
+  <PropertyGroup>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+  </PropertyGroup>
+</Project>

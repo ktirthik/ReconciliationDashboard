@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ReconciliationDashboard.Api/ReconciliationDashboard.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ReconciliationDashboard.Tests/ReconciliationDashboard.Tests.csproj" />
+  </Folder>
+</Solution>
