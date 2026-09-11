@@ -11,10 +11,9 @@ public class CorrectionService(AppDbContext db) : ICorrectionService
     {
         var records = await db.Corrections
             .Where(c => c.AccountId == accountId)
-            .OrderByDescending(c => c.CreatedAt)
             .ToListAsync(ct);
 
-        return records.Select(ToDto).ToList();
+        return records.OrderByDescending(c => c.CreatedAt).Select(ToDto).ToList();
     }
 
     public async Task<IReadOnlyList<CorrectionDto>> RunRulesEngineAsync(Guid accountId, CancellationToken ct = default)
