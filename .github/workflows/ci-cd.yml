@@ -35,7 +35,7 @@ jobs:
         run: dotnet build src/ReconciliationDashboard.Api --no-restore -c Release
 
       - name: Run tests
-        run: dotnet run --project tests/ReconciliationDashboard.Tests -c Release
+        run: dotnet run --project tests/ReconciliationDashboard.Tests
 
       - name: Setup Node
         uses: actions/setup-node@v4

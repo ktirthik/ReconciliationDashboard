@@ -63,9 +63,14 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
-// Always migrate and seed — on SQLite this creates the DB file on first run.
-using (var scope = app.Services.CreateScope())
+// SQLite (Render): create schema + seed every startup (ephemeral disk).
+// SQL Server: seed only in Development; schema managed by EF migrations.
+var shouldSeed = dbProvider.Equals("sqlite", StringComparison.OrdinalIgnoreCase)
+              || app.Environment.IsDevelopment();
+
+if (shouldSeed)
 {
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     if (dbProvider.Equals("sqlite", StringComparison.OrdinalIgnoreCase))
         db.Database.EnsureCreated();
