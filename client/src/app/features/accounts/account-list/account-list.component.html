@@ -47,10 +47,18 @@
     <table class="data-table">
       <thead>
         <tr>
-          <th>Account #</th>
-          <th>Customer</th>
-          <th>Status</th>
-          <th>Last Updated</th>
+          <th class="sortable" [class.sorted]="sortField()==='accountNumber'" (click)="sort('accountNumber')">
+            Account # <span class="sort-icon">{{ sortIcon('accountNumber') }}</span>
+          </th>
+          <th class="sortable" [class.sorted]="sortField()==='customerName'" (click)="sort('customerName')">
+            Customer <span class="sort-icon">{{ sortIcon('customerName') }}</span>
+          </th>
+          <th class="sortable" [class.sorted]="sortField()==='status'" (click)="sort('status')">
+            Status <span class="sort-icon">{{ sortIcon('status') }}</span>
+          </th>
+          <th class="sortable" [class.sorted]="sortField()==='updatedAt'" (click)="sort('updatedAt')">
+            Last Updated <span class="sort-icon">{{ sortIcon('updatedAt') }}</span>
+          </th>
           <th></th>
         </tr>
       </thead>
