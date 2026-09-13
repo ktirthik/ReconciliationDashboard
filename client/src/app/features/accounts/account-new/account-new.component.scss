@@ -1,0 +1,30 @@
+.back-link { color: var(--text-muted); text-decoration: none; font-size: 0.875rem; display: inline-block; margin-bottom: 1rem; &:hover { color: var(--primary); } }
+
+.form-card { max-width: 480px; }
+
+.new-form { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  label { font-size: 0.875rem; font-weight: 500; }
+}
+
+.input-with-hint { display: flex; gap: 0.5rem; align-items: center; }
+
+.hint-btn {
+  white-space: nowrap;
+  font-size: 0.78rem;
+  color: var(--primary);
+  background: none;
+  border: 1px solid var(--primary);
+  border-radius: 5px;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+  &:hover { background: var(--primary); color: #fff; }
+}
+
+.field-hint { font-size: 0.78rem; color: var(--text-muted); }
+
+.form-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }

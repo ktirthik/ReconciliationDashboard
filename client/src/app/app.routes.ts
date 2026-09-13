@@ -20,6 +20,12 @@ export const routes: Routes = [
       import('./features/accounts/account-list/account-list.component').then(m => m.AccountListComponent)
   },
   {
+    path: 'accounts/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/accounts/account-new/account-new.component').then(m => m.AccountNewComponent)
+  },
+  {
     path: 'accounts/:id',
     canActivate: [authGuard],
     loadComponent: () =>

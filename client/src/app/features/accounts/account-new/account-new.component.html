@@ -1,0 +1,59 @@
+<div class="page">
+  <a routerLink="/accounts" class="back-link">← Back to Accounts</a>
+
+  <header class="page-header">
+    <h1>New Account</h1>
+  </header>
+
+  <div class="detail-card form-card">
+    @if (error()) {
+      <div class="alert alert-error">{{ error() }}</div>
+    }
+
+    <form (ngSubmit)="save()" class="new-form">
+      <div class="field">
+        <label for="accountNumber">Account Number</label>
+        <div class="input-with-hint">
+          <input
+            id="accountNumber"
+            [ngModel]="accountNumber()"
+            (ngModelChange)="accountNumber.set($event)"
+            name="accountNumber"
+            class="input"
+            placeholder="ACC-0001"
+            autocomplete="off"
+            required
+          />
+          @if (suggestedNumber() && accountNumber() !== suggestedNumber()) {
+            <button type="button" class="hint-btn" (click)="accountNumber.set(suggestedNumber())">
+              Use {{ suggestedNumber() }}
+            </button>
+          }
+        </div>
+        @if (suggestedNumber()) {
+          <span class="field-hint">Next available: <strong>{{ suggestedNumber() }}</strong></span>
+        }
+      </div>
+
+      <div class="field">
+        <label for="customerName">Customer Name</label>
+        <input
+          id="customerName"
+          [ngModel]="customerName()"
+          (ngModelChange)="customerName.set($event)"
+          name="customerName"
+          class="input"
+          placeholder="e.g. Acme Corp Ltd"
+          required
+        />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">
+          {{ saving() ? 'Creating…' : 'Create Account' }}
+        </button>
+        <a routerLink="/accounts" class="btn btn-outline">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
